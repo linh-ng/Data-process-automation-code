@@ -1,0 +1,28 @@
+import datetime
+import win32com.client
+import os
+outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
+inbox = outlook.Folders('Elo Inventory').Folders('Inbox')
+messages = inbox.Items
+message = messages.GetLast()
+date = message.senton.date()
+datelimit = (datetime.date.today () - datetime.timedelta (days=7))
+#outpath = ####### add path
+
+
+while date>datelimit:
+    try:
+        if message.subject == "Subject":
+            attachments = message.Attachments
+            Attcount = attachments.Count
+            attachment = attachments.Item(i)
+            attachment.SaveASFile("outpath" +str(attachment)) #Saves to the attachment to folder
+            print (attachment)
+        message = messages.GetPrevious()
+        date = message.senton.date()
+    except:
+        message = messages.GetPrevious()
+        date = message.senton.date()
+        
+        
+#need to add output path (10) and subject filter (15) to use
