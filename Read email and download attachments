@@ -1,3 +1,12 @@
+#Input needed in row: 
+#8: path to folder (eg: C:\\Users\\Linh.Nguyen\\ELO Touch Solutions Inc\\)
+#34, 40: sender's info, mail filter, attachment file name filter
+
+
+
+
+outpfolder= #input
+
 import datetime
 import win32com.client
 import os
@@ -5,24 +14,36 @@ outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
 inbox = outlook.Folders('Elo Inventory').Folders('Inbox')
 messages = inbox.Items
 message = messages.GetLast()
-date = message.senton.date()
+sentdate = message.senton.date()
 datelimit = (datetime.date.today () - datetime.timedelta (days=7))
-#outpath = ####### add path
 
-
-while date>datelimit:
+#define function to save attachment:
+def OL_Attsave(outpath, name, filenamefilter):
+    attachments = message.Attachments
+    att_count = attachments.Count
+    for i in range(1,att_count+1):
+        attachment = attachments.Item(i)
+        if filenamefilter in attachment.FileName and "image" not in attachment.FileName:
+                attachment.SaveASFile(outpath + str(sentdate)+"_"+name+"_" +str(attachment.Filename)) 
+    return "saved " + str(att_count) + " files for " + name +" to " + outpath
+    
+while sentdate>datelimit:
     try:
-        if message.subject == "Subject":
-            attachments = message.Attachments
-            Attcount = attachments.Count
-            attachment = attachments.Item(i)
-            attachment.SaveASFile("outpath" +str(attachment)) #Saves to the attachment to folder
-            print (attachment)
+
+        #Company1:
+        if message.SenderEmailAddress == "abc@company1.com" and message.subject == "INV ELO":
+            outpath = outpfolder + "company1\\"
+            name = 'company1'
+            OL_Attsave(outpath, name ,'') 
+      
+        #Company2:
+        elif "@company2.com" in message.SenderEmailAddress:
+            outpath = outpfolder + "company2\\"
+            name = 'company2'
+            OL_Attsave(outpath, name, 'INV')                
+        
         message = messages.GetPrevious()
-        date = message.senton.date()
+        sentdate = message.senton.date()
     except:
         message = messages.GetPrevious()
-        date = message.senton.date()
-        
-        
-#need to add output path (10) and subject filter (15) to use
+        sentdate = message.senton.date()
