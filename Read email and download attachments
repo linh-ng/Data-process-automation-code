@@ -1,3 +1,5 @@
+#Outlook-> trust center settings -> programmatic access need to allow access without notification
+
 #Input needed in row: 
 #8: path to folder (eg: C:\\Users\\Linh.Nguyen\\ELO Touch Solutions Inc\\)
 #34, 40: sender's info, mail filter, attachment file name filter
